@@ -4,7 +4,7 @@
 #include <string>
 #include "utility.h"
 
-const bool PARAM_MAP_BOSCH = true;
+const bool PARAM_MAP_BOSCH = false;
 
 extern std::string map_file_; // cf params.cpp
 extern std::string map_bosch_file_; // cf params.cpp
@@ -26,7 +26,7 @@ const double PARAM_LANE_WIDTH = 4.0; // meters
 const double PARAM_MAX_SPEED_MPH = 49;
 
 const double PARAM_MAX_SPEED = 22; // m.s-1
-const double PARAM_MAX_ACCEL = 10; // m.s-2
+const double PARAM_MAX_ACCEL = 7; // m.s-2
 const double PARAM_MAX_JERK  = 10; // m.s-3 average jerk over 1 second
 
 const double PARAM_FOV = 70.0; // Field Of View
@@ -40,7 +40,7 @@ const double PARAM_DIST_SAFETY = 3.5; // meters
 // assume 100 ms max simulator latency
 const int PARAM_PREV_PATH_XY_REUSED = 5;
 
-const bool PARAM_TRAJECTORY_JMT = true;
+const bool PARAM_TRAJECTORY_JMT = false;
 
 // some extra margin for safety: safety box around the car
 const double PARAM_CAR_SAFETY_W = 3; // meters
@@ -52,7 +52,8 @@ const int PARAM_COST_FEASIBILITY = 10000; // vs collisions, vs vehicle capabilit
 const int PARAM_COST_SAFETY      = 1000; // vs buffer distance, vs visibility or curvature
 const int PARAM_COST_LEGALITY    = 100; // vs speed limits
 const int PARAM_COST_COMFORT     = 10; // vs jerk
-const int PARAM_COST_EFFICIENCY  = 1; // vs target lane, target speed and time to goal
+const int PARAM_COST_EFFICIENCY  = 5; // vs target lane, target speed and time to goal
+const int PARAM_COST_GOAL = 1;
 
 const int PARAM_NB_LANES = 3;
 

@@ -97,7 +97,7 @@ void Map::read(string map_file) {
     prev_x = x;
     prev_y = y;
   }
-  cout << "len_ref=" << len_ref << endl;
+  //cout << "len_ref=" << len_ref << endl;
 
   // map with higher precision: 1 point every 1 meter (instead of every 30 meters)
   new_map_waypoints_x;
@@ -130,7 +130,7 @@ void Map::read(string map_file) {
 		frenet_s += distance(new_map_waypoints_x[i], new_map_waypoints_y[i], new_map_waypoints_x[i-1], new_map_waypoints_y[i-1]);
     //new_map_s.push_back(frenet_s); // TODO test both alternatives
     new_map_s.push_back(i); // better
-    cout << "frenet_s=" << frenet_s << " " << i << endl;
+    //cout << "frenet_s=" << frenet_s << " " << i << endl;
 	}
 
   max_error = 0.0;
@@ -240,7 +240,7 @@ int Map::NextWaypoint(double x, double y, double theta, const vector<double> &ma
 
 // Transform from Cartesian x,y coordinates to Frenet s,d coordinates
 vector<double> Map::getFrenet(double x, double y, double theta) {
-  vector<double> &maps_s = this->new_map_s; ; 
+  vector<double> &maps_s = this->new_map_s; ;
   vector<double> &maps_x = this->new_map_waypoints_x;
   vector<double> &maps_y = this->new_map_waypoints_y;
 
@@ -288,7 +288,7 @@ vector<double> Map::getFrenet(double x, double y, double theta) {
 
 // Transform from Frenet s,d coordinates to Cartesian x,y
 vector<double> Map::getXY(double s, double d) {
-  vector<double> &maps_s = map_waypoints_s; ; 
+  vector<double> &maps_s = map_waypoints_s; ;
   vector<double> &maps_x = map_waypoints_x;
   vector<double> &maps_y = map_waypoints_y;
 
@@ -370,7 +370,7 @@ double Map::testError(double car_x, double car_y, double car_yaw) {
     max_error = error;
   }
 
-  cout << "error=" << error << " trt_time=" << elapsed << " us (max_error=" << max_error <<  " avg_error=" << avg_error << ")" << endl;
+  // cout << "error=" << error << " trt_time=" << elapsed << " us (max_error=" << max_error <<  " avg_error=" << avg_error << ")" << endl;
 
   return error;
 }

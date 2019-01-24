@@ -37,10 +37,10 @@ struct TrajectoryXY {
   TrajectoryXY (std::vector<double> X={}, std::vector<double> Y={}) : x_vals(X), y_vals(Y) {}
 };
 
-struct TrajectoryJMT {
-  TrajectoryXY trajectory;
-  TrajectorySD path_sd;
-};
+// struct TrajectoryJMT {
+//   TrajectoryXY trajectory;
+//   TrajectorySD path_sd;
+// };
 
 
 struct PreviousPath {
@@ -50,7 +50,7 @@ struct PreviousPath {
   PreviousPath (TrajectoryXY XY={}, TrajectorySD SD={}, int N=0) : xy(XY), sd(SD), num_xy_reused(N) {}
 };
 
-TrajectoryJMT JMT_init(double car_s, double car_d);
+// TrajectoryJMT JMT_init(double car_s, double car_d);
 
 
 class Trajectory {
@@ -70,14 +70,14 @@ private:
   double min_cost_;
   int min_cost_index_;
 
-  std::vector<double> JMT(std::vector< double> start, std::vector <double> end, double T);
-  double polyeval(std::vector<double> c, double t);
-  double polyeval_dot(std::vector<double> c, double t);
-  double polyeval_ddot(std::vector<double> c, double t);
+  // std::vector<double> JMT(std::vector< double> start, std::vector <double> end, double T);
+  // double polyeval(std::vector<double> c, double t);
+  // double polyeval_dot(std::vector<double> c, double t);
+  // double polyeval_ddot(std::vector<double> c, double t);
 
   TrajectoryXY generate_trajectory     (Target target, Map &map, CarData const &car, PreviousPath const &previous_path);
-  TrajectoryJMT generate_trajectory_jmt(Target target, Map &map, PreviousPath const &previous_path);
-  TrajectoryJMT generate_trajectory_sd(Target target, Map &map, CarData const &car, PreviousPath const &previous_path);
+  // TrajectoryJMT generate_trajectory_jmt(Target target, Map &map, PreviousPath const &previous_path);
+  // TrajectoryJMT generate_trajectory_sd(Target target, Map &map, CarData const &car, PreviousPath const &previous_path);
 };
 
 #endif // TRAJECTORY_H

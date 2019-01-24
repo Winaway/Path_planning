@@ -12,7 +12,7 @@ Predictions::Predictions(vector<vector<double>> const &sensor_fusion, CarData co
 
 
   // vector of indexes in sensor_fusion
-  vector<int> closest_objects = find_closest_objects(sensor_fusion, car); 
+  vector<int> closest_objects = find_closest_objects(sensor_fusion, car);
 
   for (int i = 0; i < closest_objects.size(); i++) {
     int fusion_index = closest_objects[i];
@@ -65,10 +65,10 @@ double Predictions::get_safety_distance(double vel_back, double vel_front, doubl
 {
   //cout << "get_safety_distance: " << vel_back << ", " << vel_front << ", " << time_latency << '\n';
 
-  double safety_distance = PARAM_SD_LC;
+  double safety_distance = PARAM_SD_LC;//10m
   if (vel_back > vel_front) {
       double time_to_decelerate = (vel_back - vel_front) / decel_ + time_latency;
-      safety_distance = vel_back * time_to_decelerate + 1.5 * PARAM_CAR_SAFETY_L;
+      safety_distance = vel_back * time_to_decelerate + 2 * PARAM_CAR_SAFETY_L;
   }
   safety_distance = max(safety_distance, PARAM_SD_LC);  // conservative
   return safety_distance;
@@ -80,23 +80,23 @@ void Predictions::set_safety_distances(vector<vector<double>> const &sensor_fusi
   // slightly conservative as it will relate to safety distance
   decel_ = 0.8 * PARAM_MAX_ACCEL;
   time_to_stop_ = vel_ego_ / decel_;
-
+  //如果本车道前方有车，那就等于前方车的速度，如没有那就是最高车速
   vel_front_ = get_sensor_fusion_vel(sensor_fusion, front_[car.lane], PARAM_MAX_SPEED);
-  dist_front_ = front_dmin_[car.lane];
+  dist_front_ = front_dmin_[car.lane];//距离当前车道前车的距离
 
   if (vel_ego_ > vel_front_) {
     time_to_collision_ = dist_front_ / (vel_ego_ - vel_front_);
     time_to_decelerate_ = (vel_ego_ - vel_front_) / decel_;
-    safety_distance_ = vel_ego_ * time_to_decelerate_ + 1.75 * PARAM_CAR_SAFETY_L;
+    safety_distance_ = vel_ego_ * time_to_decelerate_ + 2 * PARAM_CAR_SAFETY_L;
   } else {
     time_to_collision_ = INF;
     time_to_decelerate_ = 0;
-    safety_distance_ = 1.75 * PARAM_CAR_SAFETY_L; 
+    safety_distance_ = 2 * PARAM_CAR_SAFETY_L;
   }
 
   paranoid_safety_distance_ = vel_ego_ * time_to_stop_ + 2 * PARAM_CAR_SAFETY_L;
 
-  cout << "SAFETY: D=" << dist_front_ << " dV=" << vel_ego_ - vel_front_ << " TTC=" << time_to_collision_ 
+  cout << "SAFETY: D=" << dist_front_ << " dV=" << vel_ego_ - vel_front_ << " TTC=" << time_to_collision_
        << " TTD=" << time_to_decelerate_ << " SD=" << safety_distance_ << " PSD=" << paranoid_safety_distance_ << '\n';
 
   for (int i = 0; i < PARAM_NB_LANES; i++) {

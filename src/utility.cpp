@@ -26,7 +26,7 @@ double get_dcenter(int lane) {
     // this a workaround for a simulator issue I think (reported by others as well on udacity forums)
     // with d set to 10 from time to time a lane violation is reported by simulator
     // while everything looks fine
-    dcenter = 9.8; // hack !!!
+    dcenter = 9.7; // hack !!!
   }
   return dcenter;
 }

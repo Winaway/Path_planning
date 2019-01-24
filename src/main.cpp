@@ -5,6 +5,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <queue>
 #include "Eigen-3.3/Eigen/Core"
 #include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
@@ -61,15 +62,17 @@ int main() {
   // car_speed: current speed
   // car_speed_target: speed at end of the planned trajectory
   // double car_speed_target = 1.0; // mph (non 0 for XY spline traj generation to avoid issues)
-  CarData car = CarData(0., 0., 0., 0., 0.,  0., 1.0, 0., false);
+  queue<int> lanes_line;
+  for(int i=0;i<20;i++)
+       lanes_line.push(1);
+  CarData car = CarData(0., 0., 0., 0., 0.,  0., 1.0, 0.);
 
   // keep track of previous s and d paths: to initialize for continuity the new trajectory
   TrajectorySD prev_path_sd;
   //////////////////////////////////////////////////////////////////////
 
 
-  h.onMessage([&map, &car, &start, &prev_path_sd](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
-                     uWS::OpCode opCode) {
+  h.onMessage([&map, &car, &start, &prev_path_sd, &lanes_line](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -83,30 +86,30 @@ int main() {
 
       if (s != "") {
         auto j = json::parse(s);
-        
+
         string event = j[0].get<string>();
-        
+
         if (event == "telemetry") {
           // j[1] is the data JSON object
 
             TrajectoryXY previous_path_xy;
-          
+
         	// Main car's localization Data
           	car.x = j[1]["x"];
           	car.y = j[1]["y"];
           	car.s = j[1]["s"];
           	car.d = j[1]["d"];
           	car.yaw = j[1]["yaw"];
-          	car.speed = j[1]["speed"];
+          	car.speed = j[1]["speed"]; //MPH
 
-            cout << "SPEEDOMETER: car.speed=" << car.speed << " car.speed_target=" << car.speed_target << '\n';
+            // cout << "SPEEDOMETER: car.speed=" << car.speed << " car.speed_target=" << car.speed_target << '\n';
           	// Previous path data given to the Planner
           	vector<double> previous_path_x = j[1]["previous_path_x"];
           	vector<double> previous_path_y = j[1]["previous_path_y"];
           	previous_path_xy.x_vals = previous_path_x;
           	previous_path_xy.y_vals = previous_path_y;
 
-          	// Previous path's end s and d values 
+          	// Previous path's end s and d values
           	double end_path_s = j[1]["end_path_s"];
           	double end_path_d = j[1]["end_path_d"];
 
@@ -120,21 +123,22 @@ int main() {
             map.testError(car.x, car.y, car.yaw);
 
             int prev_size = previous_path_xy.x_vals.size();
-            cout << "prev_size=" << prev_size << " car.x=" << car.x << " car.y=" << car.y << " car.s=" << 
-                    car.s << " car.d=" << car.d << " car.speed=" << car.speed << " car.speed_target=" << car.speed_target << endl;
+            // if(prev_size>0){
+            //   car.s = end_path_s;
+            // }
+
+          // ?car.prev_size = prev_size;
+            // cout << "prev_size=" << prev_size << " car.x=" << car.x << " car.y=" << car.y << " car.s=" <<
+            //         car.s << " car.d=" << car.d << " car.speed=" << car.speed << " car.speed_target=" << car.speed_target << endl;
 
             vector<double> frenet_car = map.getFrenet(car.x, car.y, deg2rad(car.yaw));
             car.s = frenet_car[0];
             car.d = frenet_car[1];
             car.lane = get_lane(car.d);
-            cout << "car.s=" << car.s << " car.d=" << car.d << endl;
-
-            if (start) {
-              TrajectoryJMT traj_jmt = JMT_init(car.s, car.d);
-              prev_path_sd = traj_jmt.path_sd;
-              start = false;
-            }
-
+            // cout << "car.s=" << car.s << " car.d=" << car.d << endl;
+            lanes_line.push(car.lane);
+            lanes_line.pop();
+            car.passed_path = lanes_line;
             // -- prev_size: close to 100 msec when possible -not lower bcz of simulator latency- for trajectory (re)generation ---
             // points _before_ prev_size are kept from previous generated trajectory
             // points _after_  prev_size will be re-generated
@@ -155,17 +159,17 @@ int main() {
             vector<double> next_x_vals = trajectory.getMinCostTrajectoryXY().x_vals;
             vector<double> next_y_vals = trajectory.getMinCostTrajectoryXY().y_vals;
 
-            if (PARAM_TRAJECTORY_JMT) {
-              prev_path_sd = trajectory.getMinCostTrajectorySD();
-            }
+            // if (PARAM_TRAJECTORY_JMT) {
+            //   prev_path_sd = trajectory.getMinCostTrajectorySD();
+            // }
 
             int target_lane = targets[min_cost_index].lane;
             car.speed_target = targets[min_cost_index].velocity;
 
-            if (target_lane != car.lane) {
-              cout << "====================> CHANGE LANE: lowest cost for target " << min_cost_index << " = (target_lane=" << target_lane
-                   << " target_vel=" << car.speed_target << " car.lane=" << car.lane << " cost="<< min_cost << ")" << endl;
-            }
+            // if (target_lane != car.lane) {
+            //   cout << "====================> CHANGE LANE: lowest cost for target " << min_cost_index << " = (target_lane=" << target_lane
+            //        << " target_vel=" << car.speed_target << " car.lane=" << car.lane << " cost="<< min_cost << ")" << endl;
+            // }
 
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
@@ -176,7 +180,7 @@ int main() {
 
           	//this_thread::sleep_for(chrono::milliseconds(1000));
           	ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
-          
+
         }
       } else {
         // Manual driving

@@ -13,24 +13,24 @@ using Eigen::Vector2d;
 // to identify collision between 2 convex rectangular objects
 // cf http://www.dyn4j.org/2010/01/sat/
 // ------------------------------------------------------------
-bool Cost::check_collision(double x0, double y0, double theta0, double x1, double y1, double theta1) 
+bool Cost::check_collision(double x0, double y0, double theta0, double x1, double y1, double theta1)
 {
-  Vector2d trans0; 
+  Vector2d trans0;
   trans0 << x0, y0;
-  Vector2d trans1; 
+  Vector2d trans1;
   trans1 << x1, y1;
   Matrix2d rot0, rot1;
   rot0 << cos(theta0), -sin(theta0),
           sin(theta0),  cos(theta0);
   rot1 << cos(theta1), -sin(theta1),
           sin(theta1),  cos(theta1);
-  
+
   double W = PARAM_CAR_SAFETY_W; //2;
   double L = PARAM_CAR_SAFETY_L; //5;
 
   MatrixXd car(2,4);
   car << -L/2, L/2,  L/2, -L/2,
-          W/2, W/2, -W/2, -W/2; 
+          W/2, W/2, -W/2, -W/2;
 
   MatrixXd car0(2,4);
   MatrixXd car1(2,4);
@@ -42,7 +42,7 @@ bool Cost::check_collision(double x0, double y0, double theta0, double x1, doubl
 
   // principal axis list
   MatrixXd axis(2,4);
-  axis << cos(theta0), -sin(theta0), cos(theta1), -sin(theta1), 
+  axis << cos(theta0), -sin(theta0), cos(theta1), -sin(theta1),
           sin(theta0),  cos(theta0), sin(theta1),  cos(theta1);
 
   for (int i = 0; i < axis.cols(); i++) {
@@ -116,7 +116,7 @@ int Cost::check_collision_on_trajectory(TrajectoryXY const &trajectory, std::map
 
 
 // check max speed, acceleration, jerk
-bool Cost::check_max_capabilities(vector<vector<double>> &traj)
+bool Cost::check_max_capabilities(TrajectoryXY const &trajectory)
 {
   double vx, ax, jx;
   double vy, ay, jy;
@@ -128,18 +128,20 @@ bool Cost::check_max_capabilities(vector<vector<double>> &traj)
   double y, y_1, y_2, y_3;
   double jerk_per_second;
 
-  assert(traj[0].size() == traj[1].size()); // as much x than y ...
+  //assert(traj[0].size() == traj[1].size()); // as much x than y ...
+  vector<double> x_vals=trajectory.x_vals;
+  vector<double> y_vals=trajectory.y_vals;
 
-  for (size_t t = 3; t < traj[0].size(); t++) {
-    x   = traj[0][t];
-    x_1 = traj[0][t-1];
-    x_2 = traj[0][t-2];
-    x_3 = traj[0][t-3];
+  for (size_t t = 3; t < x_vals.size(); t++) {
+    x   = x_vals[t];
+    x_1 = x_vals[t-1];
+    x_2 = x_vals[t-2];
+    x_3 = x_vals[t-3];
 
-    y   = traj[1][t];
-    y_1 = traj[1][t-1];
-    y_2 = traj[1][t-2];
-    y_3 = traj[1][t-3];
+    y   = y_vals[t];
+    y_1 = y_vals[t-1];
+    y_2 = y_vals[t-2];
+    y_3 = y_vals[t-3];
 
     vx = (x - x_1) / PARAM_DT;
     vy = (y - y_1) / PARAM_DT;
@@ -215,7 +217,7 @@ double Cost::get_predicted_dmin(TrajectoryXY const &trajectory, std::map<int, ve
 }
 
 
-Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, int car_lane)
+Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, int car_lane, int lane_ago)
 {
   cost_ = 0; // lower cost preferred
 
@@ -224,25 +226,27 @@ Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, 
   double cost_legality = 0; // vs speed limits
   double cost_comfort = 0; // vs jerk
   double cost_efficiency = 0; // vs desired lane and time to goal
+  double cost_goal_lane = 0;
+  double cost_lane_change = 0;
 
   std::map<int, vector<Coord> > predictions = predict.get_predictions();
 
   // 1) FEASIBILITY cost
   cost_feasibility += check_collision_on_trajectory(trajectory, predictions);
-  //if (check_max_capabilities(trajectory))
-  //{
+  // if (check_max_capabilities(trajectory))
+  // {
   //  cost_feasibility += 1;
-  //}
-  cost_ = cost_ + PARAM_COST_FEASIBILITY * cost_feasibility;
+  // }
+  // cost_ = cost_ + PARAM_COST_FEASIBILITY * cost_feasibility;
 
   // 2) SAFETY cost
-  // double dmin = get_predicted_dmin(trajectory, predictions);
-  // assert(dmin >= 0);
-  // if (dmin < PARAM_DIST_SAFETY) {
-  //   cost_safety = PARAM_DIST_SAFETY - dmin;
-  // } else {
-  //   cost_safety = 0;
-  // }
+  double dmin = get_predicted_dmin(trajectory, predictions);
+  assert(dmin >= 0);
+  if (dmin < PARAM_DIST_SAFETY) {
+    cost_safety = PARAM_DIST_SAFETY - dmin;
+  } else {
+    cost_safety = 0;
+  }
   cost_ = cost_ + PARAM_COST_SAFETY * cost_safety;
 
   // 3) LEGALITY cost
@@ -257,15 +261,25 @@ Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, 
 
   // sensor_fusion speed in m/s !!!
   //cost_efficiency = PARAM_MAX_SPEED - predictions_lane_speed[target.lane];
-  cost_efficiency = PARAM_FOV - predict.get_lane_free_space(target.lane);
+  cost_efficiency = floor((PARAM_FOV - predict.get_lane_free_space(target.lane))/5.0);
+  cout<<"cost_efficiency ="<< cost_efficiency << endl;
   cost_ = cost_ + PARAM_COST_EFFICIENCY * cost_efficiency;
 
-  cout << "car_lane=" << car_lane << " target.lane=" << target.lane << " target_lvel=" << predict.get_lane_speed(target.lane) << " cost=" << cost_ << endl;
+  // if(target.lane ==2 || target.lane == 0){
+  //   cost_goal_lane = 3;
+  // }
+  // cost_ = cost_ + PARAM_COST_GOAL * cost_goal_lane;
+
+  if((target.lane - lane_ago) > 1){
+    cost_lane_change = 20;
+  }
+  cost_ = cost_ + cost_lane_change;
+  // cout << "car_lane=" << car_lane << " target.lane=" << target.lane << " target_lvel=" << predict.get_lane_speed(target.lane) << " cost=" << cost_ << endl;
 }
 
 Cost::~Cost() {}
 
-double Cost::get_cost() 
+double Cost::get_cost()
 {
   return cost_;
 }

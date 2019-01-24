@@ -2,6 +2,7 @@
 #define UTILITY_H
 
 #include <vector>
+#include <queue>
 
 // Computationnal defines
 #define INF 1e10
@@ -26,6 +27,10 @@ struct Frenet {
   double d;
 };
 
+// std::queue<int> q;
+// for(int i=0;i<10;i++){
+//   q.push(1);
+// }
 
 struct CarData {
   double x;
@@ -36,10 +41,10 @@ struct CarData {
   double speed;
   double speed_target;
   int    lane;
-  bool   emergency;
-  CarData (double X=0, double Y=0, double S=0, double D=0, double YAW=0, 
-           double V=0, double VF=0, double L=0, bool E=false) : x(X), y(Y), s(S), yaw(YAW), 
-           speed(V), speed_target(VF), lane(L), emergency(E) {}
+  std::queue<int> passed_path;
+  CarData (double X=0, double Y=0, double S=0, double D=0, double YAW=0,
+           double V=0, double VF=0, double L=0) : x(X), y(Y), s(S), yaw(YAW),
+           speed(V), speed_target(VF), lane(L) {}
 };
 
 typedef std::vector<double > t_coord;
