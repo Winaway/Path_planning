@@ -52,12 +52,11 @@ int main() {
 
   bool start = true;
 
-  // car_speed: current speed
-  // car_speed_target: speed at end of the planned trajectory
-  // double car_speed_target = 1.0; // mph (non 0 for XY spline traj generation to avoid issues)
+  //previous lane points, at the start point we assume that the ego car stay in lane 1.
   queue<int> lanes_line;
   for(int i=0;i<20;i++)
        lanes_line.push(1);
+
   CarData car = CarData(0., 0., 0., 0., 0.,  0., 1.0, 0.);
 
   // keep track of previous s and d paths: to initialize for continuity the new trajectory
@@ -112,8 +111,6 @@ int main() {
           	json msgJson;
 
             //////////////////////////////////////////////////////////////////////
-
-            // map.testError(car.x, car.y, car.yaw);
 
             int prev_size = previous_path_xy.x_vals.size();
 

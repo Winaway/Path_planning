@@ -312,7 +312,7 @@ vector<double> Map::getXY(double s, double d) {
 }
 
 vector<double> Map::getXYspline(double s, double d) {
-  s = fmod(s, MAX_S); // bug fix for JMT wraparound
+  //s = fmod(s, MAX_S); // bug fix for JMT wraparound
 	double x = spline_x(s) + d * spline_dx(s);
 	double y = spline_y(s) + d * spline_dy(s);
 
@@ -326,47 +326,3 @@ double Map::getSpeedToFrenet(double Vxy, double s) {
   double Vs = (Vxy / sqrt(dx_over_ds*dx_over_ds + dy_over_ds*dy_over_ds));
   return Vs;
 }
-
-// double Map::testError(double car_x, double car_y, double car_yaw) {
-//   double error = 0;
-//
-//   // TEST XXX TODO TEMP
-//   //car_x = 770.0906;
-//   //car_y = 1129.872;
-//   //car_s = 6931.203;
-//   //car_d = 6.087758;
-//   //car_yaw = 375.72;
-//   //car_speed = 39.366;
-//
-//   //car_x = 783.6693;
-//   //car_y = 1129.419;
-//   //car_s = 6944.789;
-//   //car_d = 6.174933;
-//   //car_yaw = 358.449;
-//   //car_speed = 41.1659;
-//
-//   // check transformations accuracy
-//   clock_t start = clock();
-//   vector<double> frenet = getFrenet(car_x, car_y, deg2rad(car_yaw));
-//
-//   int frenet_s = frenet[0];
-//   int frenet_d = frenet[1];
-//
-//   vector<double> car_xy = getXYspline(frenet_s, frenet_d);
-//
-//   clock_t stop = clock();
-//   double elapsed = (double)(stop - start) * 1000000.0 / CLOCKS_PER_SEC;
-//
-//   error = distance(car_xy[0], car_xy[1], car_x, car_y);
-//   sum_error += error;
-//   num_error++;
-//   avg_error = sum_error / num_error;
-//   //assert(error < 4);
-//   if (error > max_error) {
-//     max_error = error;
-//   }
-//
-//   // cout << "error=" << error << " trt_time=" << elapsed << " us (max_error=" << max_error <<  " avg_error=" << avg_error << ")" << endl;
-//
-//   return error;
-// }

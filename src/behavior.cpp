@@ -69,19 +69,6 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
   target.lane = car.lane;
   target.velocity = car_speed_target;
 
-  // XXX TEMP just for testing
-  // -----------------------------------------------
-  // if (fabs(car.d - get_dcenter(car.lane)) <= 0.01) {
-  //   target.time = 0.0; // ASAP ... (identified as emergency target)
-  //   target.velocity = ms_to_mph(closest_speed_ms);
-  //   target.accel = 0.7 * PARAM_MAX_ACCEL;
-  //   double car_speed_ms = mph_to_ms(car.speed);
-  //   if (closest_speed_ms < car_speed_ms && closest_dist <= safety_distance)
-  //     target.accel *= -1.0;
-  // }
-  // cout << "!!!!! target: velocity=" << target.velocity << " accel=" << target.accel << '\n';
-  // -----------------------------------------------
-
   targets_.push_back(target);
 
   // XXX temp just for testing purposes
@@ -117,34 +104,7 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
       break;
   }
 
-  // vector<double> backup_vel; // only lower speeds so far ...
-  // switch (ref_vel_inc)
-  // {
-  //   case 1:
-  //     backup_vel.push_back(car_speed_target - PARAM_MAX_SPEED_INC_MPH);
-  //     backup_vel.push_back(car_speed_target - 2 * PARAM_MAX_SPEED_INC_MPH);
-  //     break;
-  //   case 0: // already max speed
-  //     backup_vel.push_back(car_speed_target - PARAM_MAX_SPEED_INC_MPH);
-  //     break;
-  //   case -1:
-  //     // emergency breaking
-  //     backup_vel.push_back(car_speed_target - PARAM_MAX_SPEED_INC_MPH);
-  //
-  //     // emergency acceleration (dangerous here)
-  //     //backup_vel.push_back(car_speed_target + PARAM_MAX_SPEED_INC_MPH);
-  //     break;
-  //   default:
-  //     assert(1 == 0); // something went wrong
-  //     break;
-  // }
 
-  //1) backup velocities on target lane
-  // target.lane = car.lane;
-  // for (size_t i = 0; i < backup_vel.size(); i++) {
-  //   target.velocity = backup_vel[i];
-  //   targets_.push_back(target);
-  // }
 
   // 2) target velocity on backup lanes
   target.velocity = car_speed_target;
@@ -152,23 +112,8 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
     target.lane = backup_lanes[i];
     targets_.push_back(target);
   }
-
-  // 2) backup velocities on backup lanes
-  // for (size_t i = 0; i < backup_vel.size(); i++) {
-  //   target.velocity = backup_vel[i];
-  //   for (size_t j = 0; j < backup_lanes.size(); j++) {
-  //     target.lane = backup_lanes[j];
-  //     targets_.push_back(target);
-  //   }
-  // }
-
-  // Last target/candidate: emergency trajectory (just in case we have no better choice)
-  // target.lane = car.lane;
-  // target.velocity = predictions.get_lane_speed(car.lane);
-  // target.time = 0.0; // ASAP ... (identified as emergency target)
-  // target.accel = -0.85 * PARAM_MAX_ACCEL;
-  // targets_.push_back(target);
 }
+
 
 Behavior::~Behavior() {}
 
