@@ -15,7 +15,7 @@ public:
   * Constructor
   */
   Map() {};
-  
+
   /**
   * Destructor
   */
@@ -27,7 +27,7 @@ public:
   double getSpeedToFrenet(double Vxy, double s);
 
   void plot(void);
-  double testError(double x, double y, double yaw); // (x,y) -> (s,d) -> (x,y) conversions and dump accuracy
+  // double testError(double x, double y, double yaw); // (x,y) -> (s,d) -> (x,y) conversions and dump accuracy
   void read(std::string map_file);
 
 

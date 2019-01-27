@@ -59,10 +59,10 @@ RM = /usr/local/Cellar/cmake/3.12.2/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/SNAH/CarND-Path-Planning-Project
+CMAKE_SOURCE_DIR = /Users/SNAH/carnd/term3/p1/CarND-Path-Planning-Project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/SNAH/CarND-Path-Planning-Project/build
+CMAKE_BINARY_DIR = /Users/SNAH/carnd/term3/p1/CarND-Path-Planning-Project/build
 
 #=============================================================================
 # Target rules for target CMakeFiles/path_planning.dir
@@ -71,7 +71,7 @@ CMAKE_BINARY_DIR = /Users/SNAH/CarND-Path-Planning-Project/build
 CMakeFiles/path_planning.dir/all:
 	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/depend
 	$(MAKE) -f CMakeFiles/path_planning.dir/build.make CMakeFiles/path_planning.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/SNAH/CarND-Path-Planning-Project/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target path_planning"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/SNAH/carnd/term3/p1/CarND-Path-Planning-Project/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target path_planning"
 .PHONY : CMakeFiles/path_planning.dir/all
 
 # Include target in all.
@@ -81,9 +81,9 @@ all: CMakeFiles/path_planning.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/path_planning.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/SNAH/CarND-Path-Planning-Project/build/CMakeFiles 9
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/SNAH/carnd/term3/p1/CarND-Path-Planning-Project/build/CMakeFiles 9
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/path_planning.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/SNAH/CarND-Path-Planning-Project/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/SNAH/carnd/term3/p1/CarND-Path-Planning-Project/build/CMakeFiles 0
 .PHONY : CMakeFiles/path_planning.dir/rule
 
 # Convenience name for target.

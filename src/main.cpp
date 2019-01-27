@@ -48,14 +48,7 @@ int main() {
 
   //////////////////////////////////////////////////////////////////////
   Map map;
-
-  if (PARAM_MAP_BOSCH == true) {
-    map.read(map_bosch_file_);
-  } else {
-    map.read(map_file_);
-  }
-
-  //map.plot();
+  map.read(map_file_);
 
   bool start = true;
 
@@ -120,16 +113,9 @@ int main() {
 
             //////////////////////////////////////////////////////////////////////
 
-            map.testError(car.x, car.y, car.yaw);
+            // map.testError(car.x, car.y, car.yaw);
 
             int prev_size = previous_path_xy.x_vals.size();
-            // if(prev_size>0){
-            //   car.s = end_path_s;
-            // }
-
-          // ?car.prev_size = prev_size;
-            // cout << "prev_size=" << prev_size << " car.x=" << car.x << " car.y=" << car.y << " car.s=" <<
-            //         car.s << " car.d=" << car.d << " car.speed=" << car.speed << " car.speed_target=" << car.speed_target << endl;
 
             vector<double> frenet_car = map.getFrenet(car.x, car.y, deg2rad(car.yaw));
             car.s = frenet_car[0];
