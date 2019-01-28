@@ -9,10 +9,6 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
 
   double safety_distance = predictions.get_safety_distance();
 
-  // reasoning point by point (not end_point by end_point)
-  // if (car.emergency)
-  //   car_speed_target = car.speed;
-
   bool too_close = false;
   int ref_vel_inc = 0; // -1 for max deceleration, 0 for constant speed, +1 for max acceleration
 
@@ -103,8 +99,6 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
       assert(1 == 0); // something went wrong
       break;
   }
-
-
 
   // 2) target velocity on backup lanes
   target.velocity = car_speed_target;

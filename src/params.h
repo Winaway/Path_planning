@@ -4,10 +4,7 @@
 #include <string>
 #include "utility.h"
 
-const bool PARAM_MAP_BOSCH = false;
-
 extern std::string map_file_; // cf params.cpp
-extern std::string map_bosch_file_; // cf params.cpp
 
 // The max s value before wrapping around the track back to 0
 const double MAXIMUM_S = 6945.554;
@@ -40,7 +37,7 @@ const double PARAM_DIST_SAFETY = 3.5; // meters
 // assume 100 ms max simulator latency
 const int PARAM_PREV_PATH_XY_REUSED = 5;
 
-const bool PARAM_TRAJECTORY_JMT = false;
+// const bool PARAM_TRAJECTORY_JMT = false;
 
 // some extra margin for safety: safety box around the car
 const double PARAM_CAR_SAFETY_W = 3; // meters

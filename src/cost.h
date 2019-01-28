@@ -26,11 +26,6 @@ public:
   double get_cost();
 
 private:
-  bool check_collision(double x0, double y0, double theta0, double x1, double y1, double theta1);
-  int  check_collision_on_trajectory(struct TrajectoryXY const &trajectory, std::map<int, std::vector<Coord> > &predictions);
-  bool check_max_capabilities(TrajectoryXY const &trajectory);
-  double get_predicted_dmin(struct TrajectoryXY const &trajectory, std::map<int, std::vector<Coord> > &predictions);
-
   double cost_;
 };
 

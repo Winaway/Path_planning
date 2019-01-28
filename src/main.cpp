@@ -142,17 +142,8 @@ int main() {
             vector<double> next_x_vals = trajectory.getMinCostTrajectoryXY().x_vals;
             vector<double> next_y_vals = trajectory.getMinCostTrajectoryXY().y_vals;
 
-            // if (PARAM_TRAJECTORY_JMT) {
-            //   prev_path_sd = trajectory.getMinCostTrajectorySD();
-            // }
-
             int target_lane = targets[min_cost_index].lane;
             car.speed_target = targets[min_cost_index].velocity;
-
-            // if (target_lane != car.lane) {
-            //   cout << "====================> CHANGE LANE: lowest cost for target " << min_cost_index << " = (target_lane=" << target_lane
-            //        << " target_vel=" << car.speed_target << " car.lane=" << car.lane << " cost="<< min_cost << ")" << endl;
-            // }
 
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds

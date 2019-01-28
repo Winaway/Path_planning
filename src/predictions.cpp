@@ -123,10 +123,10 @@ void Predictions::set_lane_info(vector<vector<double>> const &sensor_fusion, Car
     // !!! This should be part of the behavior planner behavior.cpp
     if (front_[i] >= 0) { // a car in front of us
       //if (lane != car_lane && (back_dmin_[i] <= 10 || front_dmin_[i] <= 10)) {
-      if (lane != car_lane && (back_dmin_[i] <= back_safety_distance_[i] || front_dmin_[i] <= front_safety_distance_[i])) {
+      if (lane != car_lane && (back_dmin_[i] <= back_safety_distance_[i] || front_dmin_[i] <= front_safety_distance_[i])) {//如果相邻车道前后有车辆安全距离内，那么设置该车道的自由空间为0，速度为0；
         lane_speed_[i] = 0;
         lane_free_space_[i] = 0; // too dangerous
-      } else {
+      } else {//其他情况，则把该车道的速度设置为前车的速度，自由空间设置为距前车的最短距离。
         double vx = sensor_fusion[front_[i]][3];
         double vy = sensor_fusion[front_[i]][4];
         lane_speed_[i] = sqrt(vx*vx+vy*vy);
@@ -134,10 +134,10 @@ void Predictions::set_lane_info(vector<vector<double>> const &sensor_fusion, Car
       }
     } else {  // if nobody in front of us
       //if (lane != car_lane && back_dmin_[i] <= 10) {
-      if (lane != car_lane && back_dmin_[i] <= back_safety_distance_[i]) {
+      if (lane != car_lane && back_dmin_[i] <= back_safety_distance_[i]) { //如果相邻车道后面有车在安全距离内，那么设置该车道的自由空间为0，速度为0；
         lane_speed_[i] = 0;
         lane_free_space_[i] = 0; // too dangerous
-      } else {
+      } else {//其他情况，则把该车道的速度设置为最大允许的速度，自由空间设置为最大视野距离。
         lane_speed_[i] = PARAM_MAX_SPEED_MPH;
         lane_free_space_[i] = PARAM_FOV;
       }

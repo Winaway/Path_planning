@@ -7,12 +7,12 @@
 #include <math.h>
 
 #include "map.h"
-#include "matplotlibcpp.h"
+// #include "matplotlibcpp.h"
 
 #include <time.h>
 
 
-namespace plt = matplotlibcpp;
+// namespace plt = matplotlibcpp;
 using namespace std;
 
 double MAX_S;
@@ -57,15 +57,15 @@ void Map::read(string map_file) {
   MAX_S = MAXIMUM_S;
 
   // to get a good spline approximation on last segment wrapping around
-  if (PARAM_MAP_BOSCH == false) {
-    map_waypoints_x.push_back(x0);
-    map_waypoints_y.push_back(y0);
-    map_waypoints_s.push_back(MAX_S);
-    map_waypoints_dx.push_back(dx0);
-    map_waypoints_dy.push_back(dy0);
-    map_waypoints_normx.push_back(x0+10*dx0);
-    map_waypoints_normy.push_back(y0+10*dy0);
-  }
+  // if (PARAM_MAP_BOSCH == false) {
+  map_waypoints_x.push_back(x0);
+  map_waypoints_y.push_back(y0);
+  map_waypoints_s.push_back(MAX_S);
+  map_waypoints_dx.push_back(dx0);
+  map_waypoints_dy.push_back(dy0);
+  map_waypoints_normx.push_back(x0+10*dx0);
+  map_waypoints_normy.push_back(y0+10*dy0);
+  // }
 
   spline_x.set_points(map_waypoints_s, map_waypoints_x);
   spline_y.set_points(map_waypoints_s, map_waypoints_y);
@@ -73,15 +73,15 @@ void Map::read(string map_file) {
   spline_dy.set_points(map_waypoints_s, map_waypoints_dy);
 
   // remove last point so we do not have duplicates (x,y): it was just for spline continuity at wraparound
-  if (PARAM_MAP_BOSCH == false) {
-    map_waypoints_x.pop_back();
-    map_waypoints_y.pop_back();
-    map_waypoints_s.pop_back();
-    map_waypoints_dx.pop_back();
-    map_waypoints_dy.pop_back();
-    map_waypoints_normx.pop_back();
-    map_waypoints_normy.pop_back();
-  }
+  // if (PARAM_MAP_BOSCH == false) {
+  map_waypoints_x.pop_back();
+  map_waypoints_y.pop_back();
+  map_waypoints_s.pop_back();
+  map_waypoints_dx.pop_back();
+  map_waypoints_dy.pop_back();
+  map_waypoints_normx.pop_back();
+  map_waypoints_normy.pop_back();
+  // }
 
   double len_ref = 0;
   double prev_x = spline_x(0);
@@ -96,21 +96,21 @@ void Map::read(string map_file) {
   //cout << "len_ref=" << len_ref << endl;
 
   // map with higher precision: 1 point every 1 meter (instead of every 30 meters)
-  new_map_waypoints_x;
-  new_map_waypoints_y;
-  new_map_waypoints_dx;
-  new_map_waypoints_dy;
-  for (double s = 0; s <= floor(MAX_S); s++) {
-    double x = spline_x(s);
-    double y = spline_y(s);
-    double dx = spline_dx(s);
-    double dy = spline_dy(s);
-
-    new_map_waypoints_x.push_back(x);
-    new_map_waypoints_y.push_back(y);
-    new_map_waypoints_dx.push_back(dx);
-    new_map_waypoints_dy.push_back(dy);
-  }
+  // new_map_waypoints_x;
+  // new_map_waypoints_y;
+  // new_map_waypoints_dx;
+  // new_map_waypoints_dy;
+  // for (double s = 0; s <= floor(MAX_S); s++) {
+  //   double x = spline_x(s);
+  //   double y = spline_y(s);
+  //   double dx = spline_dx(s);
+  //   double dy = spline_dy(s);
+  //
+  //   new_map_waypoints_x.push_back(x);
+  //   new_map_waypoints_y.push_back(y);
+  //   new_map_waypoints_dx.push_back(dx);
+  //   new_map_waypoints_dy.push_back(dy);
+  // }
 
 	double frenet_s = 0.0;
   map_s.push_back(0.0);
@@ -119,37 +119,37 @@ void Map::read(string map_file) {
     map_s.push_back(frenet_s);
 	}
 
-	frenet_s = 0.0;
-  new_map_s.push_back(0.0);
-  // new map: 1 point every meter
-	for (size_t i = 1; i < new_map_waypoints_x.size(); i++) {
-		frenet_s += distance(new_map_waypoints_x[i], new_map_waypoints_y[i], new_map_waypoints_x[i-1], new_map_waypoints_y[i-1]);
-    //new_map_s.push_back(frenet_s); // TODO test both alternatives
-    new_map_s.push_back(i); // better
-    //cout << "frenet_s=" << frenet_s << " " << i << endl;
-	}
+	// frenet_s = 0.0;
+  // new_map_s.push_back(0.0);
+  // // new map: 1 point every meter
+	// for (size_t i = 1; i < new_map_waypoints_x.size(); i++) {
+	// 	frenet_s += distance(new_map_waypoints_x[i], new_map_waypoints_y[i], new_map_waypoints_x[i-1], new_map_waypoints_y[i-1]);
+  //   //new_map_s.push_back(frenet_s); // TODO test both alternatives
+  //   new_map_s.push_back(i); // better
+  //   //cout << "frenet_s=" << frenet_s << " " << i << endl;
+	// }
 
-  max_error = 0.0;
-  sum_error = 0.0;
-  avg_error = 0.0;
-  num_error = 0;
+  // max_error = 0.0;
+  // sum_error = 0.0;
+  // avg_error = 0.0;
+  // num_error = 0;
 }
 
 Map::~Map() {}
 
 
-void Map::plot(void) {
-  plt::title("Map");
-  plt::plot(map_waypoints_x, map_waypoints_y, "r*");
-  plt::plot(map_waypoints_normx, map_waypoints_normy, "g*");
-
-  //cout << new_map_waypoints_x.size() << " " << new_map_waypoints_y << endl;
-  plt::plot(new_map_waypoints_x, new_map_waypoints_y, "b-");
-  vector<double> car_x = { 1, 770.0906};
-  vector<double> car_y = { 1, 1129.872};
-  plt::plot(car_x, car_y, "gx");
-  plt::show();
-}
+// void Map::plot(void) {
+//   plt::title("Map");
+//   plt::plot(map_waypoints_x, map_waypoints_y, "r*");
+//   plt::plot(map_waypoints_normx, map_waypoints_normy, "g*");
+//
+//   //cout << new_map_waypoints_x.size() << " " << new_map_waypoints_y << endl;
+//   plt::plot(new_map_waypoints_x, new_map_waypoints_y, "b-");
+//   vector<double> car_x = { 1, 770.0906};
+//   vector<double> car_y = { 1, 1129.872};
+//   plt::plot(car_x, car_y, "gx");
+//   plt::show();
+// }
 
 int Map::ClosestWaypoint(double x, double y, const vector<double> &maps_x, const vector<double> &maps_y) {
 
@@ -236,9 +236,13 @@ int Map::NextWaypoint(double x, double y, double theta, const vector<double> &ma
 
 // Transform from Cartesian x,y coordinates to Frenet s,d coordinates
 vector<double> Map::getFrenet(double x, double y, double theta) {
-  vector<double> &maps_s = this->new_map_s; ;
-  vector<double> &maps_x = this->new_map_waypoints_x;
-  vector<double> &maps_y = this->new_map_waypoints_y;
+  // vector<double> &maps_s = this->new_map_s; ;
+  // vector<double> &maps_x = this->new_map_waypoints_x;
+  // vector<double> &maps_y = this->new_map_waypoints_y;
+
+  vector<double> &maps_s = this->map_s; ;
+  vector<double> &maps_x = this->map_waypoints_x;
+  vector<double> &maps_y = this->map_waypoints_y;
 
 	int next_wp = NextWaypoint(x,y, theta, maps_x,maps_y);
 
@@ -262,16 +266,16 @@ vector<double> Map::getFrenet(double x, double y, double theta) {
 
 	//see if d value is positive or negative by comparing it to a center point
 
-  if (PARAM_MAP_BOSCH == false) {
-	  double center_x = PARAM_CENTER_X - maps_x[prev_wp];
-	  double center_y = PARAM_CENTER_Y - maps_y[prev_wp];
-	  double centerToPos = distance(center_x,center_y,x_x,x_y);
-	  double centerToRef = distance(center_x,center_y,proj_x,proj_y);
+  // if (PARAM_MAP_BOSCH == false) {
+  double center_x = PARAM_CENTER_X - maps_x[prev_wp];
+  double center_y = PARAM_CENTER_Y - maps_y[prev_wp];
+  double centerToPos = distance(center_x,center_y,x_x,x_y);
+  double centerToRef = distance(center_x,center_y,proj_x,proj_y);
 
-	  if (centerToPos <= centerToRef) {
-	  	frenet_d *= -1;
-	  }
+  if (centerToPos <= centerToRef) {
+  	frenet_d *= -1;
   }
+  // }
 
   double frenet_s = maps_s[prev_wp]; // XXX faster
 	frenet_s += distance(0,0,proj_x,proj_y);
@@ -311,18 +315,18 @@ vector<double> Map::getXY(double s, double d) {
 	return {x,y};
 }
 
-vector<double> Map::getXYspline(double s, double d) {
-  //s = fmod(s, MAX_S); // bug fix for JMT wraparound
-	double x = spline_x(s) + d * spline_dx(s);
-	double y = spline_y(s) + d * spline_dy(s);
-
-	return {x,y};
-}
-
-double Map::getSpeedToFrenet(double Vxy, double s) {
-  s = fmod(s, MAX_S);
-  double dx_over_ds = spline_x.deriv(1, s);
-  double dy_over_ds = spline_y.deriv(1, s);
-  double Vs = (Vxy / sqrt(dx_over_ds*dx_over_ds + dy_over_ds*dy_over_ds));
-  return Vs;
-}
+// vector<double> Map::getXYspline(double s, double d) {
+//   //s = fmod(s, MAX_S); // bug fix for JMT wraparound
+// 	double x = spline_x(s) + d * spline_dx(s);
+// 	double y = spline_y(s) + d * spline_dy(s);
+//
+// 	return {x,y};
+// }
+//
+// double Map::getSpeedToFrenet(double Vxy, double s) {
+//   s = fmod(s, MAX_S);
+//   double dx_over_ds = spline_x.deriv(1, s);
+//   double dy_over_ds = spline_y.deriv(1, s);
+//   double Vs = (Vxy / sqrt(dx_over_ds*dx_over_ds + dy_over_ds*dy_over_ds));
+//   return Vs;
+// }

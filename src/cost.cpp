@@ -7,39 +7,6 @@ using Eigen::Matrix2d;
 using Eigen::VectorXd;
 using Eigen::Vector2d;
 
-//dmin: distance between the ego_vehicle and near vehicles
-double Cost::get_predicted_dmin(TrajectoryXY const &trajectory, std::map<int, vector<Coord> > &predictions)
-{
-  double dmin = INF;
-
-  std::map<int, vector<Coord> >::iterator it = predictions.begin();
-  while(it != predictions.end())
-  {
-    int fusion_index = it->first;
-    //cout << "fusion_index=" << fusion_index << endl;
-    vector<Coord> prediction = it->second;
-
-    assert(prediction.size() == trajectory.x_vals.size());
-    assert(prediction.size() == trajectory.y_vals.size());
-
-    for (size_t i = 0; i < prediction.size(); i++) { // up to 50 (x,y) coordinates
-      double obj_x = prediction[i].x;
-      double obj_y = prediction[i].y;
-      double ego_x = trajectory.x_vals[i];
-      double ego_y = trajectory.y_vals[i];
-
-      double dist = distance(ego_x, ego_y, obj_x, obj_y);
-      if (dist < dmin) {
-        dmin = dist;
-      }
-    }
-    it++;
-  }
-
-  cout << "=====> dmin = " << dmin << endl;
-  return dmin;
-}
-
 
 Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, int car_lane, int lane_ago)
 {
