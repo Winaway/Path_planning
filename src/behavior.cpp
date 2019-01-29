@@ -4,7 +4,6 @@ using namespace std;
 
 Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Predictions const &predictions) {
   Target target;
-  target.time = 2.0;
   double car_speed_target = car.speed_target;
 
   double safety_distance = predictions.get_safety_distance();
@@ -27,7 +26,6 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
       double check_speed = sqrt(vx*vx+vy*vy);
       double check_car_s = sensor_fusion[i][5];
 
-      // check_car_s+=(double)car.prev_size*.02*check_speed;
 
       //cout << "obj_idx=" << i << " REF_VEL_MS=" << ref_vel_ms << " CHECK_SPEED=" << check_speed << endl;
 
@@ -67,33 +65,26 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
 
   targets_.push_back(target);
 
-  // XXX temp just for testing purposes
-  target.velocity = car_speed_target; // XXX TEMP just for testing
-  target.time = 2.0;
-  // XXX temp just for testing purposes
-
-  // Backup targets (lane and speed)
-
   vector<int> backup_lanes;
   switch (car.lane)
   {
     case 2:
-      if(predictions.get_lane_free_space(1)!=0){
-        backup_lanes.push_back(1);
-      }
+      // if(predictions.get_lane_free_space(1)!=0){
+      backup_lanes.push_back(1);
+      // }
       break;
     case 1:
-      if(predictions.get_lane_free_space(2)!=0){
-        backup_lanes.push_back(2);
-      }
-      if(predictions.get_lane_free_space(0)!=0){
-        backup_lanes.push_back(0);
-      }
+      // if(predictions.get_lane_free_space(2)!=0){
+      backup_lanes.push_back(2);
+      // }
+      // if(predictions.get_lane_free_space(0)!=0){
+      backup_lanes.push_back(0);
+      // }
       break;
     case 0:
-      if(predictions.get_lane_free_space(1)!=0){
-        backup_lanes.push_back(1);
-      }
+      // if(predictions.get_lane_free_space(1)!=0){
+      backup_lanes.push_back(1);
+      // }
       break;
     default:
       assert(1 == 0); // something went wrong
@@ -107,7 +98,6 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
     targets_.push_back(target);
   }
 }
-
 
 Behavior::~Behavior() {}
 

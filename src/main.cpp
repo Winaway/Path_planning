@@ -10,7 +10,6 @@
 #include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
 
-//#include "utility.h"
 #include "map.h"
 #include "behavior.h"
 #include "trajectory.h"
@@ -54,7 +53,7 @@ int main() {
 
   //previous lane points, at the start point we assume that the ego car stay in lane 1.
   queue<int> lanes_line;
-  for(int i=0;i<20;i++)
+  for(int i=0;i<30;i++)
        lanes_line.push(1);
 
   CarData car = CarData(0., 0., 0., 0., 0.,  0., 1.0, 0.);
@@ -127,7 +126,6 @@ int main() {
             // points _after_  prev_size will be re-generated
             PreviousPath previous_path = PreviousPath(previous_path_xy, prev_path_sd, min(prev_size, PARAM_PREV_PATH_XY_REUSED));
 
-            // --------------------------------------------------------------------------
             // --- 6 car predictions x 50 points x 2 coord (x,y): 6 objects predicted over 1 second horizon ---
             Predictions predictions = Predictions(sensor_fusion, car, PARAM_NB_POINTS /* 50 */);
 

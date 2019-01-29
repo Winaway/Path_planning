@@ -23,14 +23,12 @@ Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, 
   std::map<int, vector<Coord> > predictions = predict.get_predictions();
 
   // 2) SAFETY cost
-  // double dmin = get_predicted_dmin(trajectory, predictions);
-  // assert(dmin >= 0);
-  // if (dmin < PARAM_DIST_SAFETY) {
-  //   cost_safety = PARAM_DIST_SAFETY - dmin;
-  // } else {
-  //   cost_safety = 0;
-  // }
-  // cost_ = cost_ + PARAM_COST_SAFETY * cost_safety;
+  if (predict.get_lane_free_space(target.lane)==0) {
+    cost_safety = 1;
+  } else {
+    cost_safety = 0;
+  }
+  cost_ = cost_ + PARAM_COST_SAFETY * cost_safety;
 
   // 3) LEGALITY cost
   cost_ = cost_ + PARAM_COST_LEGALITY * cost_legality;
