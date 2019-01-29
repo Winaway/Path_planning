@@ -62,7 +62,6 @@ private:
   // will be used by behavior planner
   double safety_distance_ = PARAM_SD;
   double paranoid_safety_distance_ = PARAM_SD;
-
 };
 
 #endif // PREDICTIONS_H

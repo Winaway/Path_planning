@@ -13,8 +13,8 @@
 struct Target {
   double lane;
   double velocity;
-  double accel; // XXX for emergency trajectories
-  Target(double l=0, double v=0,  double a=0) : lane(l), velocity(v),  accel(a) {}
+  // double accel; // XXX for emergency trajectories
+  Target(double l=0, double v=0) : lane(l), velocity(v) {}
 };
 
 

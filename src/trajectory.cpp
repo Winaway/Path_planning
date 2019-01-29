@@ -1,12 +1,8 @@
 #include "trajectory.h"
 
-
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-
-
-
 
 Trajectory::Trajectory(std::vector<Target> targets, Map &map, CarData &car, PreviousPath &previous_path, Predictions &predictions)
 {
@@ -30,7 +26,6 @@ Trajectory::Trajectory(std::vector<Target> targets, Map &map, CarData &car, Prev
     }
   }
 }
-
 
 TrajectoryXY Trajectory::generate_trajectory(Target target, Map &map, CarData const &car, PreviousPath const &previous_path)
 {
@@ -74,11 +69,6 @@ TrajectoryXY Trajectory::generate_trajectory(Target target, Map &map, CarData co
   vector<double> next_wp0 = map.getXY(car.s+30, get_dcenter(target.lane));
   vector<double> next_wp1 = map.getXY(car.s+60, get_dcenter(target.lane));
   vector<double> next_wp2 = map.getXY(car.s+90, get_dcenter(target.lane));
-
-  // vector<double> next_wp0 = map.getXYspline(car.s+30, get_dcenter(target.lane));
-  // vector<double> next_wp1 = map.getXYspline(car.s+60, get_dcenter(target.lane));
-  // vector<double> next_wp2 = map.getXYspline(car.s+90, get_dcenter(target.lane));
-
 
   ptsx.push_back(next_wp0[0]);
   ptsx.push_back(next_wp1[0]);
@@ -144,6 +134,5 @@ TrajectoryXY Trajectory::generate_trajectory(Target target, Map &map, CarData co
     next_y_vals.push_back(y_point);
   }
 
-  //return { next_x_vals, next_y_vals };
   return TrajectoryXY(next_x_vals, next_y_vals);
 }

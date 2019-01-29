@@ -69,22 +69,15 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
   switch (car.lane)
   {
     case 2:
-      // if(predictions.get_lane_free_space(1)!=0){
       backup_lanes.push_back(1);
-      // }
       break;
     case 1:
-      // if(predictions.get_lane_free_space(2)!=0){
       backup_lanes.push_back(2);
-      // }
-      // if(predictions.get_lane_free_space(0)!=0){
       backup_lanes.push_back(0);
-      // }
       break;
     case 0:
-      // if(predictions.get_lane_free_space(1)!=0){
       backup_lanes.push_back(1);
-      // }
+
       break;
     default:
       assert(1 == 0); // something went wrong

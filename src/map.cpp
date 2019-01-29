@@ -11,14 +11,10 @@
 
 #include <time.h>
 
-
 using namespace std;
 
 double MAX_S;
 
-/**
- * Initializes Vehicle
- */
 void Map::read(string map_file) {
   ifstream in_map_(map_file.c_str(), ifstream::in);
   string line;
@@ -56,7 +52,6 @@ void Map::read(string map_file) {
 }
 
 Map::~Map() {}
-
 
 int Map::ClosestWaypoint(double x, double y, const vector<double> &maps_x, const vector<double> &maps_y) {
 
@@ -133,11 +128,8 @@ int Map::NextWaypoint(double x, double y, double theta, const vector<double> &ma
     }
 	}
 
-  // XXX debug
-  //cout << "corrected closestWaypoint=" << closestWaypoint << endl;
 	return closestWaypoint;
 }
-
 
 // Transform from Cartesian x,y coordinates to Frenet s,d coordinates
 vector<double> Map::getFrenet(double x, double y, double theta) {
@@ -175,9 +167,6 @@ vector<double> Map::getFrenet(double x, double y, double theta) {
   if (centerToPos <= centerToRef) {
   	frenet_d *= -1;
   }
-  // }
-
-
 
   double frenet_s = 0;
 	for(int i = 0; i < prev_wp; i++)

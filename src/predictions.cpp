@@ -39,15 +39,6 @@ Predictions::Predictions(vector<vector<double>> const &sensor_fusion, CarData co
 
 Predictions::~Predictions() {}
 
-
-//double get_sdistance(double s1, double s2)
-//{
-//  // account for s wraparound at MAX_S
-//  double sdistance = min( fabs(s1 - s2), min(fabs((s1+MAX_S) - s2), fabs(s1 - (s2+MAX_S))) );
-//  return sdistance;
-//}
-
-
 double get_sensor_fusion_vel(vector<vector<double>> const &sensor_fusion, int idx, double default_vel)
 {
   double vx, vy, vel;
