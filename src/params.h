@@ -47,7 +47,7 @@ const int PARAM_MAX_COLLISION_STEP = 25;
 // cost.cpp: weighted cost function from most critical to less critical one
 const int PARAM_COST_SAFETY      = 10000; // vs buffer distance, vs visibility or curvature
 const int PARAM_COST_EFFICIENCY  = 10; // vs target lane, target speed and time to goal
-const int PARAM_COST_EFFICIENCY_2  = 1;
+const int PARAM_COST_EFFICIENCY_2  = 5;
 const int PARAM_COST_GOAL = 1;
 
 const int PARAM_NB_LANES = 3;

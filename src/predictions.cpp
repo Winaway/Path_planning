@@ -4,8 +4,10 @@
 using namespace std;
 
 
-// map of at most 6 predictions: with 50 points x 2 coord (x,y): 6 objects predicted over 1 second horizon
-// predictions map: a dictionnary { fusion_index : horizon * (x,y) }
+// At first, find the closest vehicles(at most six) near ego_car;
+//According to the sensor_fusion data, we can set the safety distance of each nearby vehicle;
+//Combined with the safety distance and nearby vehicles state, set the lane_speed_ and lane_free_space_ of each lane.
+
 Predictions::Predictions(vector<vector<double>> const &sensor_fusion, CarData const &car, int horizon)
 {
   std::map<int, vector<Coord> > predictions; // map of at most 6 predicitons of "n_horizon" (x,y) coordinates
@@ -13,26 +15,6 @@ Predictions::Predictions(vector<vector<double>> const &sensor_fusion, CarData co
 
   // vector of indexes in sensor_fusion
   vector<int> closest_objects = find_closest_objects(sensor_fusion, car);
-
-  for (int i = 0; i < closest_objects.size(); i++) {
-    int fusion_index = closest_objects[i];
-    if (fusion_index >= 0) {
-      //double fusion_id = sensor_fusion[fusion_index][0];
-      double x = sensor_fusion[fusion_index][1];
-      double y = sensor_fusion[fusion_index][2];
-      double vx = sensor_fusion[fusion_index][3];
-      double vy = sensor_fusion[fusion_index][4];
-      vector<Coord> prediction; // vector of at most 6 predicitons of "n_horizon" (x,y) coordinates
-      for (int j = 0; j < horizon; j++) {
-        Coord coord;
-        coord.x = x + vx * j*PARAM_DT;
-        coord.y = y + vy * j*PARAM_DT;
-        prediction.push_back(coord);
-      }
-      predictions_[fusion_index] = prediction;
-    }
-  }
-
   set_safety_distances(sensor_fusion, car);
   set_lane_info(sensor_fusion, car);
 }
@@ -65,6 +47,7 @@ double Predictions::get_safety_distance(double vel_back, double vel_front, doubl
   return safety_distance;
 }
 
+// 作为 set_lane_info 的准备
 void Predictions::set_safety_distances(vector<vector<double>> const &sensor_fusion, CarData const &car)
 {
   vel_ego_ = mph_to_ms(car.speed);  // velocity of ego vehicle
@@ -87,8 +70,8 @@ void Predictions::set_safety_distances(vector<vector<double>> const &sensor_fusi
 
   paranoid_safety_distance_ = vel_ego_ * time_to_stop_ + 2 * PARAM_CAR_SAFETY_L;
 
-  cout << "SAFETY: D=" << dist_front_ << " dV=" << vel_ego_ - vel_front_ << " TTC=" << time_to_collision_
-       << " TTD=" << time_to_decelerate_ << " SD=" << safety_distance_ << " PSD=" << paranoid_safety_distance_ << '\n';
+  // cout << "SAFETY: D=" << dist_front_ << " dV=" << vel_ego_ - vel_front_ << " TTC=" << time_to_collision_
+  //      << " TTD=" << time_to_decelerate_ << " SD=" << safety_distance_ << " PSD=" << paranoid_safety_distance_ << '\n';
 
   for (int i = 0; i < PARAM_NB_LANES; i++) {
     front_velocity_[i] = get_sensor_fusion_vel(sensor_fusion, front_[i], PARAM_MAX_SPEED);
@@ -97,18 +80,17 @@ void Predictions::set_safety_distances(vector<vector<double>> const &sensor_fusi
     back_velocity_[i] = get_sensor_fusion_vel(sensor_fusion, back_[i], 0);
     back_safety_distance_[i] = get_safety_distance(back_velocity_[i], vel_ego_, 2.0);
 
-    cout << "SAFETY_DISTANCE for LC[" << i << "]: front_sd=" << front_safety_distance_[i] << " back_sd=" << back_safety_distance_[i] << '\n';
+    // cout << "SAFETY_DISTANCE for LC[" << i << "]: front_sd=" << front_safety_distance_[i] << " back_sd=" << back_safety_distance_[i] << '\n';
   }
-
 }
 
 void Predictions::set_lane_info(vector<vector<double>> const &sensor_fusion, CarData const &car)
 {
   int car_lane = get_lane(car.d);
   for (size_t i = 0; i < front_.size(); i++) {
-    cout << "lane " << i << ": ";
-    cout << "front " << front_[i] << " at " << front_dmin_[i] << " s_meters ; ";
-    cout << "back " << back_[i] << " at " << back_dmin_[i] << " s_meters" << endl;
+    // cout << "lane " << i << ": ";
+    // cout << "front " << front_[i] << " at " << front_dmin_[i] << " s_meters ; ";
+    // cout << "back " << back_[i] << " at " << back_dmin_[i] << " s_meters" << endl;
 
     int lane = i;
     // !!! This should be part of the behavior planner behavior.cpp
@@ -133,7 +115,7 @@ void Predictions::set_lane_info(vector<vector<double>> const &sensor_fusion, Car
         lane_free_space_[i] = PARAM_FOV;
       }
     }
-    cout << "Predictions::lane_speed_[" << i << "]=" << lane_speed_[i] << endl;
+    // cout << "Predictions::lane_speed_[" << i << "]=" << lane_speed_[i] << endl;
   }
 }
 

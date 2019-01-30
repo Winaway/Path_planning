@@ -7,7 +7,7 @@
 #include <math.h>
 
 #include "map.h"
-// #include "matplotlibcpp.h"
+
 
 #include <time.h>
 
@@ -15,6 +15,7 @@ using namespace std;
 
 double MAX_S;
 
+// Read in map from map_file.
 void Map::read(string map_file) {
   ifstream in_map_(map_file.c_str(), ifstream::in);
   string line;
@@ -23,7 +24,7 @@ void Map::read(string map_file) {
 
   double last_s = 0;
 
-  // Load up map values for waypoint's x,y,s and d normalized normal vectors
+  // Load up map values for waypoint's x,y,s and d
   while (getline(in_map_, line)) {
     istringstream iss(line);
   	double x, y;
@@ -52,7 +53,7 @@ void Map::read(string map_file) {
 }
 
 Map::~Map() {}
-
+// Find the closest way point on the map;
 int Map::ClosestWaypoint(double x, double y, const vector<double> &maps_x, const vector<double> &maps_y) {
 
 	double closestLen = 100000; //large number
@@ -60,55 +61,19 @@ int Map::ClosestWaypoint(double x, double y, const vector<double> &maps_x, const
 
   int size = maps_x.size();
 
-  if (size <= 200) {
-	  for (int i = 0; i < size; i++) {
-	  	double map_x = maps_x[i];
-	  	double map_y = maps_y[i];
-	  	double dist = distance(x,y,map_x,map_y);
-	  	if(dist < closestLen) {
-	  		closestLen = dist;
-	  		closestWaypoint = i;
-	  	}
-	  }
-  } else  { // Faster search with big maps: 2 hierarchical steps of search
-    // 1) Search a point relatively close to the nearest
-    int jump_points = size / 181; // so that we have 1 jump_points with a 181 points map (default)
-    int point = 0;
-	  while(point < size)
-    {
-	  	double map_x = maps_x[point];
-	  	double map_y = maps_y[point];
-	  	double dist = distance(x,y,map_x,map_y);
-	  	if(dist < closestLen) {
-	  		closestLen = dist;
-	  		closestWaypoint = point;
-	  	}
-      point += jump_points;
-    }
-
-    // 2) Search a point which is the nearest in a refined area
-	  //for (int i = closestWaypoint - 181; i < closestWaypoint + 181; i++)
-	  for (int i = closestWaypoint - 91; i < closestWaypoint + 91; i++) {
-      int idx = i;
-      if (i < 0) {
-        idx += size;
-      } else if (i >= size) {
-        idx -= size;
-      }
-
-	  	double map_x = maps_x[idx];
-	  	double map_y = maps_y[idx];
-	  	double dist = distance(x,y,map_x,map_y);
-	  	if(dist < closestLen) {
-	  		closestLen = dist;
-	  		closestWaypoint = idx;
-	  	}
-    }
+  for (int i = 0; i < size; i++) {
+  	double map_x = maps_x[i];
+  	double map_y = maps_y[i];
+  	double dist = distance(x,y,map_x,map_y);
+  	if(dist < closestLen) {
+  		closestLen = dist;
+  		closestWaypoint = i;
+  	}
   }
-
 	return closestWaypoint;
 }
 
+// Get the next way point;
 int Map::NextWaypoint(double x, double y, double theta, const vector<double> &maps_x, const vector<double> &maps_y) {
 	int closestWaypoint = ClosestWaypoint(x,y,maps_x,maps_y);
 
@@ -180,7 +145,6 @@ vector<double> Map::getFrenet(double x, double y, double theta) {
 
 	return {frenet_s, frenet_d};
 }
-
 
 // Transform from Frenet s,d coordinates to Cartesian x,y
 vector<double> Map::getXY(double s, double d) {

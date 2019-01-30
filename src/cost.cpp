@@ -18,22 +18,26 @@ Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, 
   double cost_lane_change = 0;
 
   std::map<int, vector<Coord> > predictions = predict.get_predictions();
-
+  cout<<"========="<< endl;
+  cout<<"target_lane = "<<target.lane<<endl;
   // 1) SAFETY cost
   if (predict.get_lane_free_space(target.lane)==0) {
     cost_safety = 1;
   } else {
     cost_safety = 0;
   }
+  cout<<"cost_safty ="<< PARAM_COST_SAFETY * cost_safety << endl;
   cost_ = cost_ + PARAM_COST_SAFETY * cost_safety;
 
 
   // 2) EFFICIENCY cost
   cost_efficiency = floor((PARAM_FOV - predict.get_lane_free_space(target.lane))/5.0);
-  cout<<"cost_efficiency ="<< cost_efficiency << endl;
+  cout<<"cost_efficiency ="<<PARAM_COST_EFFICIENCY * cost_efficiency << endl;
   cost_ = cost_ + PARAM_COST_EFFICIENCY * cost_efficiency;
 
   cost_efficiency_2 = PARAM_MAX_SPEED - predict.get_lane_speed(target.lane);
+  cost_efficiency_2 = max(cost_efficiency_2,0.0);
+  cout<<"cost_efficiency_2 ="<< PARAM_COST_EFFICIENCY_2 * cost_efficiency_2 << endl;
   cost_ = cost_ + PARAM_COST_EFFICIENCY_2 * cost_efficiency_2;
 
 
@@ -42,7 +46,10 @@ Cost::Cost(TrajectoryXY const &trajectory, Target target, Predictions &predict, 
   if((target.lane - lane_ago) > 1){
     cost_lane_change = 20;
   }
+  cout<<"cost_lane_change ="<< cost_lane_change << endl;
   cost_ = cost_ + cost_lane_change;
+
+  cout<<"total_cost = "<<cost_<<endl;
 }
 
 Cost::~Cost() {}

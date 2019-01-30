@@ -9,7 +9,7 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
   double safety_distance = predictions.get_safety_distance();
 
   bool too_close = false;
-  int ref_vel_inc = 0; // -1 for max deceleration, 0 for constant speed, +1 for max acceleration
+  // int ref_vel_inc = 0; // -1 for max deceleration, 0 for constant speed, +1 for max acceleration
 
   double ref_vel_ms = mph_to_ms(car_speed_target);
   double closest_speed_ms = PARAM_MAX_SPEED;
@@ -51,12 +51,12 @@ Behavior::Behavior(vector<vector<double>> const &sensor_fusion, CarData car, Pre
       }
     }
     car_speed_target = max(car_speed_target, 0.0); // no backwards driving ... just in case 确保不会倒车
-    ref_vel_inc = -1;
+    // ref_vel_inc = -1;
   } else if (car_speed_target < PARAM_MAX_SPEED_MPH) {
     //ref_vel += 2 * .224;
     car_speed_target += 0.9*PARAM_MAX_SPEED_INC_MPH;
     car_speed_target = min(car_speed_target, PARAM_MAX_SPEED_MPH);//确保速度不会超过限速
-    ref_vel_inc = +1;
+    // ref_vel_inc = +1;
   }
 
   // our nominal target .. same lane
