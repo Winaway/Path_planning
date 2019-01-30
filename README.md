@@ -45,7 +45,7 @@ Combined the generated target_trajectories and cost function, we can choose a tr
 ## Conclusion
 The final path planner works well, but not perfectly. The car is able to drive at least 4.32 miles without incident, but the planner can avoid maximum jerk at special situation. Improving the planner proved to be very difficult , because there  are  always  suddenly  acceleration or deceleration of  other vehicles.
 
-![](Path%20Planning%20Project/Snip20190127_3.png)
+![](img/Snip20190127_3.png)
 
 ::belowing are from Udacity::
 # CarND-Path-Planning-Project
