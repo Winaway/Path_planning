@@ -49,21 +49,16 @@ int main() {
   Map map;
   map.read(map_file_);
 
-  bool start = true;
-
   //previous lane points, at the start point we assume that the ego car stay in lane 1.
   queue<int> lanes_line;
   for(int i=0;i<30;i++)
        lanes_line.push(1);
 
   CarData car = CarData(0., 0., 0., 0., 0.,  0., 1.0, 0.);
-
-  // keep track of previous s and d paths: to initialize for continuity the new trajectory
-  TrajectorySD prev_path_sd;
   //////////////////////////////////////////////////////////////////////
 
 
-  h.onMessage([&map, &car, &start, &prev_path_sd, &lanes_line](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&map, &car, &lanes_line](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -124,7 +119,7 @@ int main() {
             // -- prev_size: close to 100 msec when possible -not lower bcz of simulator latency- for trajectory (re)generation ---
             // points _before_ prev_size are kept from previous generated trajectory
             // points _after_  prev_size will be re-generated
-            PreviousPath previous_path = PreviousPath(previous_path_xy, prev_path_sd, min(prev_size, PARAM_PREV_PATH_XY_REUSED));
+            PreviousPath previous_path = PreviousPath(previous_path_xy,  min(prev_size, PARAM_PREV_PATH_XY_REUSED));
 
             // --- 6 car predictions x 50 points x 2 coord (x,y): 6 objects predicted over 1 second horizon ---
             Predictions predictions = Predictions(sensor_fusion, car, PARAM_NB_POINTS /* 50 */);

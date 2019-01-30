@@ -17,19 +17,6 @@
 #include "Eigen-3.3/Eigen/Dense"
 
 
-// Point of a C2 class function
-struct PointC2 {
-  double f;
-  double f_dot;
-  double f_ddot;
-  PointC2 (double y=0, double y_dot=0, double y_ddot=0) : f(y), f_dot(y_dot), f_ddot(y_ddot) {}
-};
-
-struct TrajectorySD {
-  std::vector<PointC2> path_s;
-  std::vector<PointC2> path_d;
-  TrajectorySD (std::vector<PointC2> S={}, std::vector<PointC2> D={}) : path_s(S), path_d(D) {}
-};
 
 struct TrajectoryXY {
   std::vector<double> x_vals;
@@ -39,9 +26,8 @@ struct TrajectoryXY {
 
 struct PreviousPath {
   TrajectoryXY xy;   // < PARAM_NB_POINTS (some already used by simulator)
-  TrajectorySD sd;   // exactly PARAM_NB_POINTS (not sent to simulator)
   int num_xy_reused;  // reused from xy
-  PreviousPath (TrajectoryXY XY={}, TrajectorySD SD={}, int N=0) : xy(XY), sd(SD), num_xy_reused(N) {}
+  PreviousPath (TrajectoryXY XY={}, int N=0) : xy(XY),  num_xy_reused(N) {}
 };
 
 class Trajectory {
@@ -52,12 +38,10 @@ public:
   double getMinCost() { return min_cost_; };
   double getMinCostIndex() { return min_cost_index_; };
   TrajectoryXY getMinCostTrajectoryXY() { return trajectories_[min_cost_index_]; };
-  TrajectorySD getMinCostTrajectorySD() { return trajectories_sd_[min_cost_index_]; };
 
 private:
   std::vector<class Cost> costs_;
   std::vector<TrajectoryXY> trajectories_;
-  std::vector<TrajectorySD> trajectories_sd_;
   double min_cost_;
   int min_cost_index_;
 
